@@ -97,7 +97,8 @@ cat > /etc/caddy/Caddyfile <<EOF_CADDY
 {
   auto_https off
 }
-http://127.0.0.1:${ORIGIN_PORT} {
+http://:${ORIGIN_PORT} {
+  bind 127.0.0.1
   @vless path /vless-argo /vless-argo/*
   handle @vless {
     reverse_proxy 127.0.0.1:${VLESS_PORT}
@@ -202,7 +203,7 @@ vless://${UUID}@${HOST}:443?encryption=none&security=tls&sni=${HOST}&type=ws&hos
 
 VMess WS+TLS:
 EOF_OUT
-VMESS_JSON="{\"v\":\"2\",\"ps\":\"xray-tunnel-kit-vmess\",\"add\":\"${HOST}\",\"port\":\"443\",\"id\":\"${UUID}\",\"aid\":\"0\",\"scy\":\"auto\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"${HOST}\",\"path\":\"/vmess-argo\",\"tls\":\"tls\",\"sni\":\"${HOST}\"}"
+VMESS_JSON="{\"v\":\"2\",\"ps\":\"xray-tunnel-kit-vmess\",\"add\":\"${HOST}\",\"port\":\"443\",\"id\":\"${UUID}\",\"aid\":\"0\",\"scy\":\"aes-128-gcm\",\"net\":\"ws\",\"type\":\"none\",\"host\":\"${HOST}\",\"path\":\"/vmess-argo\",\"tls\":\"tls\",\"sni\":\"${HOST}\"}"
 printf 'vmess://%s\n' "$(printf '%s' "$VMESS_JSON" | base64 -w0)"
 EOF_LINKS
 chmod 0755 /usr/local/bin/xray-tunnel-kit-links
