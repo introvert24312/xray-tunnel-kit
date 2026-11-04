@@ -10,7 +10,7 @@ DOMAIN="${DOMAIN:-}"
 UUID="${UUID:-$(cat /proc/sys/kernel/random/uuid 2>/dev/null || true)}"
 BASE_DIR="/etc/xray-tunnel-kit"
 XRAY_BIN="/usr/local/bin/xray"
-CLOUDFLARED_BIN="/usr/local/bin/cloudflared"
+CLOUDFLARED_BIN="${BASE_DIR}/cloudflared"
 
 say() { printf '\n[%s] %s\n' "$1" "$2"; }
 die() { say ERROR "$1" >&2; exit 1; }
@@ -56,12 +56,15 @@ install -d -o root -g xray -m 0750 "$BASE_DIR"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-say INFO 'Downloading Xray and cloudflared.'
+say INFO 'Downloading Xray.'
 curl -fsSL "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-${XRAY_ARCH}.zip" -o "$TMP_DIR/xray.zip"
 unzip -oq "$TMP_DIR/xray.zip" xray -d "$TMP_DIR/xray"
 install -m 0755 "$TMP_DIR/xray/xray" "$XRAY_BIN"
-curl -fsSL "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${CF_ARCH}" -o "$CLOUDFLARED_BIN"
-chmod 0755 "$CLOUDFLARED_BIN"
+if [[ "$TUNNEL_MODE" == quick ]]; then
+  say INFO 'Downloading cloudflared for Quick Tunnel mode.'
+  curl -fsSL "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${CF_ARCH}" -o "$CLOUDFLARED_BIN"
+  chmod 0755 "$CLOUDFLARED_BIN"
+fi
 
 VLESS_PORT=$((ORIGIN_PORT + 1))
 VMESS_PORT=$((ORIGIN_PORT + 2))
