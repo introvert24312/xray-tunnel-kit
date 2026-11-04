@@ -97,7 +97,7 @@ cat > /etc/caddy/Caddyfile <<EOF_CADDY
 {
   auto_https off
 }
-127.0.0.1:${ORIGIN_PORT} {
+http://127.0.0.1:${ORIGIN_PORT} {
   @vless path /vless-argo /vless-argo/*
   handle @vless {
     reverse_proxy 127.0.0.1:${VLESS_PORT}
