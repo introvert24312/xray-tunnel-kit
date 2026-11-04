@@ -25,6 +25,25 @@ If logging in as root, run directly; otherwise use `sudo env TUNNEL_MODE=fixed D
 
 The fixed Tunnel's Cloudflare route must target the Caddy origin port. The public client always uses port 443 with TLS; the local origin port (10126) is only between `cloudflared` and Caddy. The hostname should be a domain managed in your Cloudflare account.
 
+## Move to a new VPS (fixed Tunnel)
+
+For each new VPS:
+
+1. Create or select a named Cloudflare Tunnel and connect `cloudflared` on the VPS.
+2. Add a **Published application** route for the public hostname. Set its service to `http://127.0.0.1:<ORIGIN_PORT>` (for example, `http://127.0.0.1:10126`).
+3. Download this repository's latest `install.sh` on the VPS.
+4. Run the installer with the hostname and the same origin port used in the route:
+   ```sh
+   TUNNEL_MODE=fixed DOMAIN=your.hostname.example ORIGIN_PORT=10126 ./install.sh
+   ```
+5. Generate the client links:
+   ```sh
+   xray-tunnel-kit-links
+   ```
+   Import the VLESS and VMess links into your client.
+
+The installer does not configure the Cloudflare Tunnel or handle its token. Choose an unused `ORIGIN_PORT`; the next two ports (`ORIGIN_PORT + 1` and `ORIGIN_PORT + 2`) must also be free for the loopback-only Xray listeners.
+
 ## Temporary Quick Tunnel
 
 ```sh
