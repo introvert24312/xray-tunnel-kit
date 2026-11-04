@@ -4,7 +4,7 @@ Debian/Ubuntu installer for Xray VMess and VLESS over WebSocket behind Cloudflar
 
 ## Port model
 
-`ORIGIN_PORT` is the local HTTP port that Cloudflare Tunnel forwards to. It defaults to `10126`. Caddy listens on `http://127.0.0.1:ORIGIN_PORT` and sends the two WebSocket paths to Xray listeners on the next two loopback ports:
+`ORIGIN_PORT` is the local HTTP port that Cloudflare Tunnel forwards to. It defaults to `10126`. Caddy listens only on loopback using the wildcard site address `http://:ORIGIN_PORT` plus `bind 127.0.0.1`, so it accepts the public hostname Cloudflare forwards in the Host header. It sends the two WebSocket paths to Xray listeners on the next two loopback ports:
 
 - `ORIGIN_PORT + 1`: VLESS WS at `/vless-argo`
 - `ORIGIN_PORT + 2`: VMess WS at `/vmess-argo`
@@ -59,7 +59,7 @@ journalctl -u xray-tunnel-kit-xray -n 50 --no-pager
 journalctl -u caddy -n 50 --no-pager
 ```
 
-Use the VLESS or VMess link as appropriate. Both use TLS on the public hostname and WebSocket paths listed above. Cloudflare terminates public TLS; the local service is plain HTTP on loopback. For fixed mode, make sure the named Tunnel connector is healthy and the published route uses the exact local origin port.
+Use the VLESS or VMess link as appropriate. Both use TLS on the public hostname and WebSocket paths listed above. The generated VMess link uses `aes-128-gcm` for compatibility with sing-box and `alterId=0`. Cloudflare terminates public TLS; the local service is plain HTTP on loopback. For fixed mode, make sure the named Tunnel connector is healthy and the published route uses the exact local origin port.
 
 ## Optional settings
 
