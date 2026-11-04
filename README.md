@@ -13,11 +13,11 @@ For example, with `ORIGIN_PORT=10126`, Cloudflare forwards to `http://127.0.0.1:
 
 ## Fixed Tunnel
 
-Create a named Tunnel and a **Published application** route in Cloudflare. Point its service to `http://127.0.0.1:10126` (or your chosen origin port). Install/run the `cloudflared` connector as Cloudflare instructs. Then on the Debian/Ubuntu VPS:
+Create a named Tunnel and a **Published application** route in Cloudflare. Point its service to `http://127.0.0.1:10126` (or your chosen origin port). Install/run the `cloudflared` connector as Cloudflare instructs. This repository is private, so first authorize an SSH key on the Debian/Ubuntu VPS for read access to this repository, then clone it:
 
 ```sh
-curl -fsSLO https://raw.githubusercontent.com/introvert24312/xray-tunnel-kit/master/install.sh
-chmod +x install.sh
+git clone git@github.com:introvert24312/xray-tunnel-kit.git
+cd xray-tunnel-kit
 TUNNEL_MODE=fixed DOMAIN=argo.example.com ORIGIN_PORT=10126 ./install.sh
 ```
 
